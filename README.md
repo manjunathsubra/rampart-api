@@ -7,7 +7,7 @@ Backend application for the Rampart AI Hackathon team.
 1. Clone the repository:
 
    ```sh
-   git clone git@github.com:drivecaramel/caramel-api.git
+   git clone https://github.com/manjunathsubra/rampart-api.git
    ```
 
 2. Install dependencies:
