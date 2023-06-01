@@ -44,5 +44,6 @@ functions:
           path: feedbacks
           method: post
           cors: ${self:custom.defaultCors}
+    timeout: 30
 plugins:
   - serverless-offline

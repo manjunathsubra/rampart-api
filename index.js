@@ -60,9 +60,28 @@ app.post('/feedbacks', async (req, res) => {
     frequency_penalty: 0,
     presence_penalty: 0,
   });
-  console.log('Received the response from Open AI - ', JSON.stringify(response.data));
+  console.log('Received the reviews from Open AI - ', JSON.stringify(response.data));
+  const feedbacks = response?.data?.choices?.[0].text || '';
 
-  return res.status(200).send(response?.data?.choices?.[0].text || '');
+  let hashtags;
+  if (feedbacks?.length) {
+    const response = await openAI.createCompletion({
+      model: "text-davinci-003",
+      prompt: `Create hashtags for the feedback: \n${feedbacks}`,
+      temperature: 1.57,
+      max_tokens: 2500,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+    console.log('Received the hashtags from Open AI - ', JSON.stringify(response.data));
+    hashtags = response?.data?.choices?.[0].text || '';
+  }
+
+  return res.status(200).json({
+    feedbacks,
+    ...(hashtags && { hashtags }),
+  });
 });
 
 app.use((err, req, res, next) => {
