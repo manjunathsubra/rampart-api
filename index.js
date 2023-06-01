@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const { Configuration, OpenAIApi } = require("openai");
 const environment = require('./environment.js');
+const config = require('./config.json');
 
 const configuration = new Configuration({
   apiKey: environment.environment.openAIKey,
@@ -41,8 +42,8 @@ app.use(bodyParser.json());
 app.post('/feedbacks', async (req, res) => {
   console.log(JSON.stringify(req.body));
 
-  if (!req.body?.type || !req.body?.reviews || !req.body?.reviews?.length) {
-    return res.status(400).send('Missing parameters - type or reviews');
+  if (!req.body?.id || !req.body?.reviews || !req.body?.reviews?.length) {
+    return res.status(400).send('Missing parameters - id or reviews');
   }
 
   let reviews = '';
@@ -51,15 +52,22 @@ app.post('/feedbacks', async (req, res) => {
   });
   console.log('Framed the reviews prompt - ', reviews);
 
-  const response = await openAI.createCompletion({
+  const configData = config[req.body.id];
+  console.log('Config found - ', JSON.stringify(configData));
+
+  const requestData = {
     model: "text-davinci-003",
-    prompt: `Create a feedback testimonial based on the questions and answers below for ${req.body.type} .\n${reviews}`,
-    temperature: 1.57,
+    prompt: `Create a short feedback testimonial based on the questions and answers below for ${configData.name}. ${configData.description} Do not use words ${configData.keysToExclude}.\n${reviews}`,
+    // prompt: `Create a feedback testimonial based on the questions and answers below for ${req.body.type} .\n${reviews}`,
+    temperature: 1.2,
     max_tokens: 2500,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
-  });
+  }
+  console.log('Created the request for Open AI - ', JSON.stringify(requestData));
+
+  const response = await openAI.createCompletion(requestData);
   console.log('Received the reviews from Open AI - ', JSON.stringify(response.data));
   const feedbacks = response?.data?.choices?.[0].text || '';
 
@@ -89,11 +97,12 @@ app.use((err, req, res, next) => {
     return res.status(500).send('Something went wrong!');
 });
 
+/*
 if (!environment.serverlessDeployment) {
     app.listen(3000, () => {
         console.log('Server started on port 3000');
       });
-}
+}*/
 
 process
   .on('SIGTERM', () => {
