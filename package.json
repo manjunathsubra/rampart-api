@@ -1,0 +1,28 @@
+{
+  "name": "rampart",
+  "version": "1.0.0",
+  "description": "Backend application for Rampart",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start:local": "serverless offline start",
+    "pre-deploy": "rm -rf node_modules .serverless && NODE_ENV=development npm ci",
+    "deploy": "npm run pre-deploy && NODE_ENV=production SERVERLESS_DEPLOYMENT=true sls deploy --stage=$SERVICE_ENV",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "openai": "^3.2.1",
+    "serverless-http": "^3.2.0"
+  },
+  "devDependencies": {
+    "serverless": "^3.31.0",
+    "serverless-offline": "^12.0.4"
+  }
+}

@@ -1,0 +1,48 @@
+service: rampart-api
+frameworkVersion: '^3.19'
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: ${env:AWS_DEPLOYMENT_REGION}
+  environment:
+    SERVERLESS_DEPLOYMENT: ${file(environment.js):environment.serverlessDeployment}
+    OPEN_AI_KEY: ${file(environment.js):environment.openAIKey}
+custom:
+  defaultCors:
+    origin: '*'
+    headers:
+      - Content-Length
+      - Content-Type
+      - User-Agent
+      - Authorization
+      - Accept
+      - Accept-Encoding
+      - Connection
+      - Host
+      - Postman-Token
+      - X-Amz-Date
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+      - preferred-mock-type
+    allowCredentials: true
+package:
+  individually: true
+  excludeDevDependencies: true
+  patterns:
+    - '!coverage/**'
+    - '!custom/**'
+    - '!dist/test/**'
+    - '!pgdata/**'
+    - '!postmanCollections/**'
+    - '!src/**'
+functions:
+  app:
+    handler: index.restHandler
+    events:
+      - http:
+          path: feedbacks
+          method: post
+          cors: ${self:custom.defaultCors}
+plugins:
+  - serverless-offline
