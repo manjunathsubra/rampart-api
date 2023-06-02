@@ -86,9 +86,26 @@ app.post('/feedbacks', async (req, res) => {
     hashtags = response?.data?.choices?.[0].text || '';
   }
 
+  let rating;
+  if (feedbacks?.length) {
+    const response = await openAI.createCompletion({
+      model: "text-davinci-003",
+      prompt: `Give a rating from scale 1-5 for review: \n${feedbacks}`,
+      temperature: 1.57,
+      max_tokens: 2500,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+    console.log('Received the rating from Open AI - ', JSON.stringify(response.data));
+    const ratingText = response?.data?.choices?.[0].text || '';
+    rating = Number(ratingText.match(/\d+/)[0] || 3);
+  }
+
   return res.status(200).json({
     feedbacks,
     ...(hashtags && { hashtags }),
+    ...(rating && { rating }),
   });
 });
 
