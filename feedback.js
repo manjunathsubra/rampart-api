@@ -25,7 +25,8 @@ module.exports = async (req, res) => {
 
   const requestData = {
     model: "text-davinci-003",
-    prompt: `Create a short feedback testimonial based on the questions and answers below for ${configData.name}. ${configData.description} Do not use words ${configData.keysToExclude}.\n${reviews}`,
+    prompt: `Create a review, positive, negative or neutral, based on the questions and answers below for ${configData.name}. ${configData.description} Do not use words ${configData.keysToExclude}.\n${reviews}`,
+    // prompt: `Create a short feedback testimonial based on the questions and answers below for ${configData.name}. ${configData.description} Do not use words ${configData.keysToExclude}.\n${reviews}`,
     // prompt: `Create a feedback testimonial based on the questions and answers below for ${req.body.type} .\n${reviews}`,
     temperature: 1.2,
     max_tokens: 2500,
