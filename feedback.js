@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
   if (feedbacks?.length) {
     const response = await openAI.createCompletion({
       model: "text-davinci-003",
-      prompt: `Create hashtags for the feedback: \n${feedbacks}`,
+      prompt: `Create hashtags for the feedback: \n${feedbacks}, using only dictionary words.`,
       temperature: 1.57,
       max_tokens: 2500,
       top_p: 1,
