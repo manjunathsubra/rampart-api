@@ -1,8 +1,8 @@
 {
     "1": {
         "type": "Mental Health Application",
-        "name": "Sutter Health",
-        "description": "Sutter Health is a digital experience that delivers evidence-based tips, tools, and activities to help teens and young adults manage their everyday mental health.",
+        "name": "Y-Calm",
+        "description": "Y-Calm is a digital experience that delivers evidence-based tips, tools, and activities to help teens and young adults manage their everyday mental health.",
         "keysToInclude": [],
         "keysToExclude": ["Mental Health Application"]
     }

@@ -5,16 +5,22 @@ const apiKey = process.env.STABILITY_API_KEY;
 if (!apiKey) throw new Error("Missing Stability API key.");
 
 module.exports = async (req, res) => {
-  const { data } = await axios.post(
-    `${apiHost}/v1/generation/${engineId}/text-to-image`,
-    req.body,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-    }
-  );
-  res.status(200).json(data)
+  try {
+    console.log("imageGeneration API invoked");
+    const { data } = await axios.post(
+      `${apiHost}/v1/generation/${engineId}/text-to-image`,
+      req.body,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+      }
+    );
+    console.log("got response form stability API");
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
