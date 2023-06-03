@@ -3,4 +3,5 @@ exports.environment = {
         ? /^true$/.test(process.env.SERVERLESS_DEPLOYMENT)
         : false,
     openAIKey: process.env.OPEN_AI_KEY || '',
+    stabilityAPIKey: process.env.STABILITY_API_KEY || '',
 }

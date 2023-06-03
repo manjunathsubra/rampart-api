@@ -7,6 +7,7 @@ provider:
   environment:
     SERVERLESS_DEPLOYMENT: ${file(environment.js):environment.serverlessDeployment}
     OPEN_AI_KEY: ${file(environment.js):environment.openAIKey}
+    STABILITY_API_KEY: ${file(environment.js):environment.stabilityAPIKey}
 custom:
   defaultCors:
     origin: '*'
@@ -42,6 +43,10 @@ functions:
     events:
       - http:
           path: feedbacks
+          method: post
+          cors: ${self:custom.defaultCors}
+      - http:
+          path: imageGeneration
           method: post
           cors: ${self:custom.defaultCors}
     timeout: 30
