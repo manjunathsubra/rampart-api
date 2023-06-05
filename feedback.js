@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
 
   const requestData = {
     model: "text-davinci-003",
-    prompt: `Create a review, positive, negative or neutral, based on the questions and answers below for ${configData.name}. ${configData.description} Do not use words ${configData.keysToExclude}.\n${reviews}`,
+    prompt: `write a proper positive, negative or neutral review as user, based on the questions and answers below for ${configData.name}. ${configData.description} Do not use words ${configData.keysToExclude}.\n${reviews}. Also add some funny emoji at the end. Please rephrase review at the end`,
     // prompt: `Create a short feedback testimonial based on the questions and answers below for ${configData.name}. ${configData.description} Do not use words ${configData.keysToExclude}.\n${reviews}`,
     // prompt: `Create a feedback testimonial based on the questions and answers below for ${req.body.type} .\n${reviews}`,
     temperature: 1.2,
@@ -44,26 +44,8 @@ module.exports = async (req, res) => {
     "Received the reviews from Open AI - ",
     JSON.stringify(response.data)
   );
+
   const feedbacks = response?.data?.choices?.[0].text || "";
-
-  let hashtags;
-  if (feedbacks?.length) {
-    const response = await openAI.createCompletion({
-      model: "text-davinci-003",
-      prompt: `Create hashtags for the feedback: \n${feedbacks}, using only dictionary words.`,
-      temperature: 1.57,
-      max_tokens: 2500,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    });
-    console.log(
-      "Received the hashtags from Open AI - ",
-      JSON.stringify(response.data)
-    );
-    hashtags = response?.data?.choices?.[0].text || "";
-  }
-
   let rating;
   if (feedbacks?.length) {
     const response = await openAI.createCompletion({
@@ -81,6 +63,24 @@ module.exports = async (req, res) => {
     );
     const ratingText = response?.data?.choices?.[0].text || "";
     rating = Number(ratingText.match(/\d+/)[0] || 3);
+  }
+  let sentiment = rating < 3 ? 'negative' : (rating > 3 ? 'positive' : 'neutral')
+  let hashtags;
+  if (feedbacks?.length) {
+    const response = await openAI.createCompletion({
+      model: "text-davinci-003",
+      prompt: `Create ${sentiment} hashtags for the review: ${feedbacks} by joining max 3 english dictionary words strictly. Review and remove text which is not a hahstag`,
+      temperature: 1.57,
+      max_tokens: 2500,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+    console.log(
+      "Received the hashtags from Open AI - ",
+      JSON.stringify(response.data)
+    );
+    hashtags = response?.data?.choices?.[0].text || "";
   }
 
   return res.status(200).json({

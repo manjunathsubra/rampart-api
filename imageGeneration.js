@@ -7,6 +7,7 @@ if (!apiKey) throw new Error("Missing Stability API key.");
 module.exports = async (req, res) => {
   try {
     console.log("imageGeneration API invoked");
+    req.body.style_preset = 'photographic'
     const { data } = await axios.post(
       `${apiHost}/v1/generation/${engineId}/text-to-image`,
       req.body,
